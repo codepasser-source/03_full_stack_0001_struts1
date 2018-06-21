@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<!-- This is a blank Struts configuration file with an example welcome action/page 
+	and other commented sample elements. Tiles and the Struts Validator are configured 
+	using the factory defaults and are ready-to-use. NOTE: If you have a generator 
+	tool to create the corresponding Java classes for you, you could include 
+	the details in the "form-bean" declarations. Otherwise, you would only define 
+	the "form-bean" element itself, with the corresponding "name" and "type" 
+	attributes, as shown here. -->
+
+
+<struts-config>
+
+	<form-beans>
+		<form-bean name="UserForm" type="matt.damon.struts.form.UserForm"></form-bean>
+	</form-beans>
+
+	<action-mappings>
+
+		<!-- scope default value is Session -->
+		<action path="/Start" type="matt.damon.struts.StartAction">
+			<forward name="success" path="/step1.jsp"></forward>
+		</action>
+
+		<!-- form默认的范围为session,可以使用scope属性指定为request范围内 -->
+		<action path="/Step1" type="matt.damon.struts.Step1Action"
+			name="UserForm" scope="session">
+			<forward name="success" path="/step2.jsp"></forward>
+		</action>
+
+		<action path="/Step2" type="matt.damon.struts.Step2Action"
+			name="UserForm">
+			<forward name="success" path="/step3.jsp"></forward>
+		</action>
+
+		<action path="/Step3" type="matt.damon.struts.Step3Action"
+			name="UserForm">
+			<forward name="success" path="/finish.jsp"></forward>
+		</action>
+
+	</action-mappings>
+
+</struts-config>
+
