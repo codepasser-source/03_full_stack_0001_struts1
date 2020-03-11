@@ -1,0 +1,119 @@
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ 配置struts
+	* 拷贝struts lib下的所有jar到WEB-INF/lib下
+	* 修改web.xml文件，配置ActionServlet
+	* 提供struts-config.xml文件
+	
+ 创建登录项目
+	* 创建jsp页面（login.jsp,login_success.jsp,login_error.jsp）	
+	* 创建LoginActionForm.java
+	* 创建LoginAction.java
+	* 配置struts-config.xml文件
+	
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    struts标签的配置和使用
+
+   配置：
+	* 在struts-config.xml文件中加入
+	<message-resources parameter="MessageResources" />
+ 	* 拷贝MessageResources.properties文件到src下
+   使用：
+	* 采用taglib指令引入
+	<%@ taglib prefix="bean" uri="http://struts.apache.org/tags-bean"%>  	
+	<%@ taglib prefix="logic" uri="http://struts.apache.org/tags-logic"%> 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+jstl标签库的配置
+	* 将jstl.jar和standard.jar拷贝到WEB-INF/lib下（如果使用el表达式，不用拷贝这两个jar）
+	
+	注意：jstl必须在能够支持j2ee1.4/servlet2.4/jsp2.0版本上的容器才能运行，这个环境
+	     是目前较为常用的环境
+
+	     
+标签库的使用
+	* 采用taglib指令引入
+	<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>  
+	<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%> 
+	
+		
+自定义函数库：
+	1、定义类和方法（方法必须是public static）	
+	2、编写自定义tld文件，并且将此文件放到WEB-INF或WEB-INF任意子目录下
+	3、在jsp中采用taglib指令引入自定义函数库
+	4、采用 前缀+冒号+函数名 调用即可	
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   动态ActionForm
+	动态ActionForm是为了避免标准ActionForm膨胀而设计的，使用动态ActionForm可以获得标准
+	ActionForm的所有功能
+	* 在struts-config.xml文件中定义动态ActionForm,如：
+	<form-beans>
+		<form-bean name="dynaForm" type="org.apache.struts.action.DynaActionForm">
+			<form-property name="username" type="java.lang.String" />
+			<form-property name="age" type="java.lang.Integer"/>
+		</form-bean>
+	</form-beans>
+	*在Action中使用动态ActionForm，参见DynaActionFormTestAction.java
+		DynaActionForm daf = (DynaActionForm)form;
+		String username = (String)daf.get("username");
+		Integer age = (Integer)daf.get("age");
+		
+	动态ActionForm其实是把页面中的html元素的名字和值放到了map中，所以通过get方法可以取出相应的值
+	动态ActionForm采用EL表达式的输出方式，${dynabean.map.prop}, 参见：dyna_actionform.jsp
+	动态Action的验证，通常使用动态验证框架validator
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+   采用struts上传文件
+	* 页面的配置，如：
+ 	<form action="upload.do" method="post" enctype="multipart/form-data">
+  		标题：<input type="text" name="title"><br>
+  		文件：<input type="file" name="myfile"><br>
+  		<input type="submit" value="提交">
+  	</form>
+ 	* ActionForm中使用FormFile来接收上传的文件，参见：UploadActionForm.java
+ 	* 在Action中调用FormFile取得上传文件数据，采用流输出，即完成上传，参见：UploadTestAction.java
+	                FileOutputStream fos = new FileOutputStream("c:\\" + myFile.getFileName());
+			fos.write(myFile.getFileData());
+			fos.flush();
+			fos.close();
+ 	* 采用<controller/>标签配置上传参数，如：<controller maxFileSize="10M"/>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 	
+   空字段测试
+	* 在表单中没有input输入域，jsp脚本接收到的值为null，el表达式接收到的值为空串
+	* 如果表单中的值，没有输入，那么jsp脚本和el表达式接收到的值都为空串
+
+
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<	
+   测试ActionForm类型的自动转换
+	* boolean:yes,1,on,true都会转换成True类型，而且忽略大小写，其他情况转换成false
+	* Date类型的转换：
+		* 如果是java.sql.Date，页面日期的格式必须为yyyy-mm-dd，才可以转换
+		* 如果是java.util.Date,默认情况下struts无法转换
+
+	* 自定义转换器的实现步骤
+		* 实现converter接口，实现convert方法
+		* 将实现的conerter注册，通常情况采用servlet注册
+		* 采用servlet注册需要注意标签的配置,<load-on-startup>10</load-on-startup>(也可以采用struts plugin注册)
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		
+
+ActionForward的使用
+
+1、理解全局和局部ActionForward的概念
+2、redirect的使用
+3、struts-config.xml文件不允许动态修改
+4、理解动态ActionForward，动态的ActionForward是可以运行期修改的
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+ Struts对ActionForm的自动搜集过程：
+  * 将页面数据放到map中，其中map中的key为页面中的名称，map中的value为页面中的value值
+  * 调用BeanUtils.setProperties方法，将map中的值逐个设置到ActionForm实例上，对于ActionForm中的每个属性
+    根据类型调用相应的Converter，然后调用相应的convert方法，将相应的字符串转换成ActionForm中指定的类型
+    
+可以通过BeanUtils.copyProperties(目标对象，源对象)方法进行对象值的复制。
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+1、struts-config.xml文件中，每个<action>标签对应一个ActionMapping实例
+2、了解<action>标签中的
+    forward属性：直接转发到配置的地址，不经过action
+    unknown属性：无法找的的路径，会弹出404，配置转发到同一页面
+3、了解采用jstl和struts标签保持页面数据
